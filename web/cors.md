@@ -10,7 +10,7 @@
       - Port : 80
       - Host : localhost, www.google.com
     
-    ![urls](cors.assets/urls.png)
+    ![image-20210629153112527](cors.assets/image-20210629153112527.png)
 
 ## Cross-Origin Resource Sharing (CORS)
 
