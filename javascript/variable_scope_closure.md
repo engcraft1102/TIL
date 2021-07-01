@@ -115,6 +115,8 @@ function makeRandom() {
 
 ## 렉시컬 환경 (Lexical Environment)
 
+Lexical Scope는 함수를 어디서 선언하였는지에 따라 상위 스코프를 결정하는 것이다.
+
 ### 1. 변수
 
 js에선 실행 중인 함수, 코드 블록, 스크립트 전체는 렉시컬 환경이라 불리는 내부 숨김 연관 객체 (internal hidden accociate object)를 갖숩니다.
@@ -188,6 +190,35 @@ js에선 실행 중인 함수, 코드 블록, 스크립트 전체는 렉시컬 �
 
 전역 렉시컬 환경에 도달할 때까지 변수를 찾지 못하면 엄격 모드에선 에러가 발생합니다. 참고로 비 엄격 모드에선 정의되지 않은 변수에 값을 할당하려고 하면 에러가 발생하는 대신 새로운 전역 변수가 만들어지는데, 이는 하위 호환성을 위해 남아있는 기능입니다.
 
+**비 엄격**
+
+```javascript
+function foo() { 
+  bar = true; 
+} 
+foo(); // no error
+```
+
+**엄격**
+
+```javascript
+function fooo() {
+    'use strict'
+    bar = true;
+}
+fooo() // ReferenceError
+```
+
+```javascript
+function foo() {
+  'use strict';
+  var bar = true;
+}
+foo(); 
+```
+
+
+
 예시와 그림을 보면서 변수 검색이 어떻게 진행되는지 다시 정리해 봅시다.
 
 - 함수 `say` 내부의 `alert`에서 변수 `name`에 접근할 땐, 먼저 내부 렉시컬 환경을 살펴봅니다. 내부에서 `name`을 찾았습니다.
@@ -242,6 +273,10 @@ makeCounter를 호출하면 호출할 때마다 새로운 렉시컬 환경 객�
 
 ## 클로저 (closure)
 
+> 클로저 = 함수 + 함수를 둘러싼 환경 (Lexical Environment)
+>
+> 클로저는 독립적인 변수를 가리키는 함수이다. 또는, 클로저 안에 정의된 함수는 만들어진 환경을 기억한다.
+
 클로저는 개발자라면 알고 있어야 할 프로그래밍 용어입니다.
 
 클로저는 외부 변수를 기억하고 이 외부 변수에 접근할 수 있는 함수를 의미합니다. 몇몇 언어에서는 클로저를 구현하는게 불가능하거나 특수한 방식으로 함수를 작성해야 클로저를 만들 수 있습니다. 하지만 js에선 모든 함수가 자연스럽게 클로저가 됩니다. 예외가 하나 있긴 한데 자세한 내용은 [new Function 문법](https://ko.javascript.info/new-function)에서 다룹니다.
@@ -256,6 +291,60 @@ makeCounter를 호출하면 호출할 때마다 새로운 렉시컬 환경 객�
 자바스크립트의 함수는 숨김 프로퍼티인 [[Environment]]를 이용해 자신이 어디서 만들어졌는지 기억합니다.
 함수 본문에선 이를 이용해 외부 변수에 접근합니다.
 ```
+
+### 클로저가 아닌 경우
+
+```javascript
+function foo() {
+    var color = 'blue'
+    function bar() {
+        console.log(color)
+    }
+    bar()
+}
+foo()
+```
+
+여기서 `bar`는 클로저일까요?
+
+bar는 foo 안에 속하기 때문에 foo 스코프를 외부 스코프 참조로 저장합니다. 또한 color도 참조가 가능합니다.
+
+bar는 foo안에서 정의되고 실행되었을 뿐, foo 밖으로 나오지 않았기 때문에 클로저라고 부르지 않습니다.
+
+### 클로저인 경우
+
+```javascript
+var color = 'red';
+function foo() {
+    var color = 'blue'; 
+    function bar() {
+        console.log(color);
+    }
+    return bar;
+}
+var baz = foo();
+baz(); // blue
+```
+
+`bar`는 자신이 생성된 렉시컬 스코프 foo에서 벗어나 전역에서 baz라는 이름으로 호출되었습니다. baz()를 bar로 초기화할 때 이미 bar는 상위 스코프를 foo로 결정했기 때문에 아무리 전역에서 bar를 호출하더라도 foo의 컬러인 blue를 출력합니다.
+
+이런 bar, baz를 클로저라고 부릅니다.
+
+이렇게 쓰는 것도 가능하겠죠...
+
+```javascript
+var color = 'red';
+function foo() {
+    var color = 'blue'; 
+    return function bar() {
+        console.log(color);
+    }
+}
+var baz = foo();
+baz();// blue
+```
+
+
 
 ### 그래서 다음과 같은 함수 사용이 가능해집니다...
 
@@ -291,7 +380,53 @@ console.log(add10(10)) // 120 10 + 100 + 10
 
 add5와 add10은 둘 다 클로저이다. 이들은 같은 함수 본문을 공유하지만 서로 다른 렉시컬 환경을 저장한다. 함수 실행 시 add5의 맥락에서 클로저 내부의 x는 5지만 add10에서는 x가 10이다. 또한 1로 초기화된 y에 접근하여 y값을 100으로 변경한 것을 볼 수 있다. 이는 클로저가 리턴된 후에도 외부함수의 변수들에 접근 가능하다는 것을 보여주는 포인트이며 클로저에 단순히 값 형태로 전달되는 것이 아니라는 것을 의미한다.
 
+### 반복문 클로저
 
+```javascript
+var i;
+for (i=0; i<10; i++) {
+    setTimeout(function() {
+        console.log(i);
+    }, 100);
+}
+```
+
+과연 이 코드는 0부터 9까지 출력될까요? 답은 아닙니다. setTimeout의 콜백 함수는 모두 0.1초뒤에 호출되고, 0.1초동안 반복문은 모두 순회되어 i의 값은 10이 된 상태에서 콜백 함수가 호출되면서 10이 돼버린 i를 참조하게 되는 것입니다.
+
+- IIFE 사용 - 스코프를 추가하여 반복할 때마다 다른 값을 저장
+
+```javascript
+var i;
+for (i=0; i<10; i++) {
+    (function(e) {
+        setTimeout(function() {
+            console.log(e);
+        }, 100)
+    })(i);
+}
+```
+
+- ES6 블록 스코프 사용
+
+```javascript
+for (let i = 0; i < 10; i++) {
+    setTimeout(function () {
+      console.log(i);
+    }, 100);
+}
+
+for (let i = 0; i < 10; i++) {
+  (function (j) {
+    setTimeout(function () {
+      console.log(j);
+    }, 100);
+  })(i);
+}
+```
+
+위의 것 중 아래의 IIFE을 실행하면 setTimeout 자체는 저장되지 않는데, 이는 IIFE를 변수에 할당하면 IIFE 자체는 저장되지 않고, 함수가 실행된 결과만을 저장하기 때문이다.
+
+다시 말해, 그냥 ES6 스펙에 따라 새로 추가된 let을 쓴다면 블록 스코프니까 정상적으로 잘 뜬다.
 
 ### 실용적 클로저
 
@@ -336,5 +471,34 @@ var size16 = changeSize(16);
 <a href="#" id="size-12">12</a>
 <a href="#" id="size-14">14</a>
 <a href="#" id="size-16">16</a>
+```
+
+## Practice
+
+```javascript
+var num = 1;
+
+function a() {
+    var num = 10;
+    b();
+}
+function b() {
+    console.log(num);
+}
+a(); // 1
+b(); // 1
+```
+
+이러한 출력의 이유는 함수의 호출로 상위 스코프가 결정된 것이 아니라, **함수의 선언**에 따라 상위 스코프가 결정되었기 때문이다. 즉, b()는 상위 스코프(전역 lexical env)를 가리키고 있음을 알 수 있다.
+
+```javascript
+function init() {
+    var name = 'Mozilla';
+    function displayName() {
+        console.log(name);
+    }
+    displayName()
+}
+init() // Mozilla
 ```
 
