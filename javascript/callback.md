@@ -72,6 +72,60 @@ getData(function(tableData) {
 });
 ```
 
+먼저 callbackFunc(response) 함수에 response 값을 넘겨주게 되면 callbackFunc() 자체에 response 값이 담긴 것이고, getData()의 인자로 function(tableData) 형식으로 다시 풀어쓰면 tableData에 response 값이 들어가게 되는거군요!!!!!!!! 와 신기하다 JS
+
+## 모던 JS의 콜백
+
+```js
+function loadScript(src) {
+    // script 태그를 만들고 페이지에 태그를 추가하는 함수입니다.
+    // 태그가 페이지에 추가되면 src에 있는 스크립트를 로딩하고 실행합니다.
+    let script = document.createElement('script');
+    script.src = src;
+    document.head.append(script);
+}
+```
+
+함수 `loadScript(src)`는 script를 동적으로 만들고 이를 문서에 추가합니다. 브라우저는 자동으로 태그에 있는 스크립트를 불러오고, 로딩이 완료되면 스크립트를 실행합니다.
+
+`loadScript(src)` 사용법은 다음과 같습니다.
+
+```js
+// 해당 경로에 위치한 스크립트를 불러오고 실행함
+loadScript('/my/script.js');
+```
+
+그런데 이때 스크립트는 비동기적으로 실행됩니다. 로딩은 지금 당장 시작되더라도 실행은 함수가 끝난 후에야 되기 때문입니다.
+
+따라서 loadScript 아래의 코드들은 스크립트 로딩이 종료되는걸 기다리지 않습니다.
+
+만약 스크립트 로딩이 끝나자마자 이 스크립트를 사용해 뭔가를 해야만 한다고 가정해 봅시다. 스크립트 안에 다양한 함수가 정의되어 있고, 우리는 이 함수를 실행하길 원하는 상황입니다.
+
+```js
+loadScript('/my/script.js'); // script.js엔 newFunction()이 있음
+
+newFunction(); // 함수가 존재하지 않는다는 에러 발생
+```
+
+이 에러는 '비동기이기 때문' 입니다. 원하는 대로 스크립트 안의 함수나 변수를 사용하려면 스크립트 로딩이 끝났는지 여부를 알 수 있어야 합니다.
+
+`loadScript`의 두 번째 인수로 스크립트 로딩이 끝나고 실행될 함수인 `callback` 함수를 추가해 봅시다.
+
+> 콜백 함수는 나중에 호출할 함수를 의미합니다!!
+
+```js
+function loadScript(src, callback) {
+    let script = document.createElement('script');
+    script.src = src;
+    
+    script.onload = () => callback(script);
+    
+    document.head.append(script);
+}
+```
+
+
+
 ## 비유로 이해하는 콜백 함수 동작 방식
 
 콜백 함수의 동작 방식은 일종의 식당 자리 예약과 같습니다. 일반적으로 맛집을 가면 사람이 많아 자리가 없습니다. 그래서 대기자 명단에 이름을 쓰고 기다리죠. 그리고 전화가 옵니다. 이 전화를 받는 시점이 콜백 함수가 호출되는 시점과 같습니다.
@@ -96,6 +150,8 @@ $.get('url', function(response) {
 
 웹 서비스를 개발하다 보면 서버에서 데이터를 받아와 화면에 표시하기까지 인코딩, 사용자 인증 등을 처리해야 하는 경우가 있습니다. 만약 이 모든 과정을 비동기로 처리해야 한다고 하면 위와 같이 콜백 안에 콜백을 계속 무는 형식으로 코딩하게 됩니다. 가독성이 매우 구리죠.
 
+
+
 ## 콜백 지옥을 해결하는 방법
 
 일반적으로 콜백 지옥을 해결하는 방법에는 Promise나 Async를 사용하는 방법이 있습니다. 만약 코딩 패턴으로만 해결하려면 이렇게...
@@ -114,3 +170,24 @@ $.get('url', function(response) {
 	parseValue(response, parseValueDone);
 });
 ```
+
+콜백 지옥을 멸망의 피라미드라고 표현하기도 한다네요. 모던 JS의 멸망의 피라미드 탈출 코드는 아래와 같습니다.
+
+```js
+loadScript('1.js' step1);
+
+function step1(error, script) {
+    if (error) {
+        handleError(error)
+    } else {
+        loadScript('2.js', step2)
+    }
+}
+
+function step2(error, script) {
+    if (error) {
+        hand....
+    }
+}
+```
+
