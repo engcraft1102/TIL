@@ -1,5 +1,7 @@
 # var, const, let JavaScript 변수
 
+[TOC]
+
 ## Dynamic Typed Language
 
 C언오와 Java와 같은 Static Typed Language에서는 변수를 선언할 때 int나 char 같은 자료형과 함께 선언한다. 하지만 Python이나 JavaScript는 Dynamic Typed Language로 선언시 타입을 명시하지 않는다. 파이썬의 경우 변수명만 선언하는 매우 간단한 방식이지만 JS는 변수명앞에 변수임을 알려주는 var를 붙였다.
