@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <h1>오늘의 할 일</h1>
+  <ul class="itemList">
+    <li>
+      <input type="checkbox" id="item1">
+      <label for="item1">이벤트 버블링 학습</label>
+    </li>
+    <li>
+      <input type="checkbox" id="item2">
+      <label for="item2">이벤트 캡쳐 학습</label>
+    </li>
+  </ul>
+</body>
+<script>
+  // appendChild를 하면 안먹히는 코드
+  // var inputs = document.querySelectorAll('input');
+  // inputs.forEach(function(input) {
+  //   input.addEventListener('click', function(event) {
+  //     alert('clicked');
+  //   });
+  // });
+  var itemList = document.querySelector('.itemList');
+
+  itemList.addEventListener("click", (event) => {
+    if (event.target.tagName == 'LABEL') return;
+    else console.log('인풋임');
+  });
+
+  var li = document.createElement('li');
+  var input = document.createElement('input');
+  var label = document.createElement('label');
+  var labelText = document.createTextNode('이벤트 위임 학습');
+
+  input.setAttribute('type', 'checkbox');
+  input.setAttribute('id', 'item3');
+  label.setAttribute('for', 'item3');
+  label.appendChild(labelText);
+  li.appendChild(input);
+  li.appendChild(label);
+  itemList.appendChild(li);
+
+</script>
+</html>
