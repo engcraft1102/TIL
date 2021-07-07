@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    span, div {
+      background: yellow;
+      border: 1px solid red;
+    }
+    .boxone {
+      position: relative;
+      top: 5px;
+      z-index: 1;
+    }
+
+    .boxtwo {
+      position: relative;
+      left: 10px;
+      top: 500px;
+      padding-top: 50px;
+    }
+
+    .boxthr {
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+
+    .left {
+      position: relative;
+      left: 5px;
+
+    }
+
+  </style>
+</head>
+<body>
+  <span class="boxone">onew</span>
+  <span class="boxtwo">two
+    <span class="boxthr">three</span>
+  </span>
+  <div class="left">left</div>
+</body>
+</html>
