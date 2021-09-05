@@ -119,9 +119,7 @@ setTimeout 함수는 비동기처리를 해주는 자바스크립트 내장 함�
 
 ![Batman Slapping Robin Meme |  ASYNC THE HELL OUT OF API CALLS; 429-TOO MANY REQUESTS; REZA TAKHSHID | image tagged in memes,batman slapping robin | made w/ Imgflip meme maker](sync_asnyc.assets/56wquc.jpg)
 
-하지만 비동기 코드를 생각없이 도배하면 안된다. 생각없이 사용한 비동기 코드는 예상치 못한 오류를 발생시키기 십상이다. 이러한 오류를 피하기 위해 Callback Function, Promise, async&await 가 있으며, 열심히 공부하고 신중하게 사용해야 한다. 비동기 처리의 오류를 피하기 위한 내용은 다음 글에 정리하자.
-
-
+하지만 비동기 코드를 생각없이 도배하면 안된다. 생각없이 사용한 비동기 코드는 예상치 못한 오류를 발생시키기 십상이다. 이러한 오류를 피하기 위해 Callback Function, Promise, async&await 가 있으며, 열심히 공부하고 신중하게 사용해야 한다.
 
 ## Reference
 
