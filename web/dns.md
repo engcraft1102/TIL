@@ -78,21 +78,27 @@ DNS란 게 어찌 돌아가는지 간단하게 예를 들어 보겠다.
 
 신뢰할 수 있는 DNS는 도메인에 대해 최종 권한이 있으며 재귀적 DNS 서버에 IP 주소 정보가 담긴 답을 제공할 책임이 있다.
 
-### Top-Level Domain 최상위 도메인
-
-루트 DNS 서버는 로컬 DNS 서버에게 모른다고 응답하는 동시에, 이렇게 말한다.
-
-'나한텐 해당 도메인 주소가 없다. 대신 `jdev.co.kr`에서 `kr`의 주소를 알고 있으니, kr DNS에 물어봐라. 그럼 로컬 DNS 서버는 kr DNS 서버에 다시 물어보게 된다. 이걸 계속 반복하게 된다.
-
 ### **Root DNS Server**
 
-DNS에서 IP 주소를 받는 방법은 트리구조를 떠올리면 된다.
+로컬 DNS한테 물어봤을 때 IP주소가 없으면 해당 DNS 서버는 Root DNS 서버에 물어보게 된다.
+
+Root DNS 서버는 TLD DNS 서버로, 해당 DNS부터 시작해서 아래에 줄줄이 딸린 node DNS 서버에게로 차례차례 물어보게 된다.
+
+트리구조를 떠올리면 된다.
 
 ![img](dns.assets/img.png)
 
 요런 식이다.
 
-모든 DNS 서버들은 이 Root DNS Server의 주소를 기본적으로 갖고 있다. 그리고 모르는 Domain Name이 온다면 Root DNS에 묻게 된다.
+모든 DNS 서버들은 이 Root DNS Server의 주소를 기본적으로 갖고 있다. 
+
+그리고 모르는 Domain Name이 온다면 Root DNS에 묻게 된다. 하지만 Root DNS server의 목록에도 해당 Domain Name의 IP가 없을 수 있다. 그럼 Root DNS는 로컬에게 TLD 주소에 대한 정보를 주면서 `나는 그 Domain Name에 해당하는 IP 주소가 없으니 여기에 찾아가 봐라`고 답한다.
+
+### Top-Level Domain 최상위 도메인
+
+루트 DNS 서버는 로컬 DNS 서버에게 모른다고 응답하는 동시에, 이렇게 말한다.
+
+'나한텐 해당 도메인 주소가 없다. 대신 `jdev.co.kr`에서 `kr`의 주소를 알고 있으니, kr DNS에 물어봐라. 그럼 로컬 DNS 서버는 kr DNS 서버에 다시 물어보게 된다. 이걸 계속 반복하게 된다.
 
 ### 재귀적으로 순환을 반복
 
