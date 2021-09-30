@@ -30,9 +30,9 @@ path('password/reset/', PasswordResetView.as_view(), name='password_reset'),
 
 `django.urls.exceptions.NoReverseMatch: Reverse for 'password_reset_confirm' not found. 'password_reset_confirm' is not a valid view function or pattern name.`
 
-에러 메시지를 보니 password_reset_confirm이 필요한 것 같습니다.
+에러 메시지를 보니, `패스워드의 초기화 password_reset`의 사용을 위해서는 password_reset_confirm이라는 name을 가지는 함수의 처리가 필요한 것 같습니다.
 
-새 패스워드를 입력하는 페이지로 `redirect`하기 위한 path와,
+따라서 새 패스워드를 입력하는 페이지로 `redirect`하기 위한 path와,
 
 ```python
 path('password/reset/confirm/uid=<int:uid>&token=<str:token>/', passwordResetRedirect, name='password_reset_redirect'),
@@ -46,13 +46,11 @@ path('password/reset/confirm/', PasswordResetConfirmView.as_view(), name='passwo
 
 ### 2. NoReverseMatch: 500 Error
 
-
-
 이번에는 500 에러가 납니다. 백엔드 코드가 잘못되었네요.
 
 `django.urls.exceptions.NoReverseMatch: Reverse for 'password_reset_confirm' with arguments '('1', 'atspiv-ef80120e759475ff5b718620f8c7c439')' not found. 1 pattern(s) tried: ['account/password/reset/confirm/$']`
 
-password_reset_confirm에 잘못된 부분이 있는 것 같습니다. 여기서 좀 헤맸습니다. 그러다가 `1 pattern(s) tried: ['account/password/reset/confirm/$']`를 보고 생각했습니다. 
+password_reset_confirm에 잘못된 부분이 있는 것 같습니다. 여기서 좀 헤맸습니다. 그러다가 `1 pattern(s) tried: ['account/password/reset/confirm/$']`를 보고 생각했습니다.
 
 > 리다이렉트를 위해 추가해 둔 path의 name이 잘못 된 것일까? 그럼 name을 바꿔 보자.
 
