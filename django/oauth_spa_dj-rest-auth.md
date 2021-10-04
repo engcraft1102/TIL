@@ -1,14 +1,14 @@
 # [Vue + Django] DRF로 소셜 로그인 구현 중 삽질의 기록😵
 
-OAuth2 로그인은 여러 가지 방식으로 가능합니다. 
+OAuth2 로그인은 여러 가지 방식으로 가능합니다.
 
-이번에는 백 개발자 분들이 `dj-rest-auth` 라이브러리를 사용했기에, DRF로 소셜 로그인을 구현해 보면서 기록한 내용을 정리해 보겠습니다. 
+이번에는 백 개발자 분들이 `dj-rest-auth` 라이브러리를 사용했기에, DRF로 소셜 로그인을 구현해 보면서 기록한 내용을 정리해 보겠습니다.
 
 [DRF 로 소셜 로그인 구현하기](https://medium.com/chanjongs-programming-diary/django-rest-framework%EB%A1%9C-%EC%86%8C%EC%85%9C-%EB%A1%9C%EA%B7%B8%EC%9D%B8-api-%EA%B5%AC%ED%98%84%ED%95%B4%EB%B3%B4%EA%B8%B0-google-kakao-github-2ccc4d49a781)를 참고했습니다. 따라하면서 직접 적용해보니 안 되는 부분이 있어서 해결하기 위해 삽질을 꽤 했습니다. 혹시 같은 링크로 에러가 나신 분은 이 글을 한번 읽어 보셔도 좋을 것 같습니다.
 
 우선 아래의 사진을 보고 시작하는 것이 도움이 됩니다.
 
-![img](oauth.assets/sociallogin.png)
+![img](oauth_spa_dj-rest-auth.assets/sociallogin.png)
 
 # Google
 
@@ -18,11 +18,11 @@ OAuth2 로그인은 여러 가지 방식으로 가능합니다.
 
 먼저 sites 메뉴에서 도메인 이름을 localhost로 바꿔줍니다.
 
-![image-20211003011645315](oauth.assets/image-20211003011645315.png)
+![image-20211003011645315](oauth_spa_dj-rest-auth.assets/image-20211003011645315.png)
 
 admin 페이지에서 로그인을 위한 소셜 어플리케이션 값을 넣었습니다.
 
-![image-20211003011533415](oauth.assets/image-20211003011533415.png)
+![image-20211003011533415](oauth_spa_dj-rest-auth.assets/image-20211003011533415.png)
 
 ## Code값을 받기 위한 Google OAuth 연동
 
@@ -42,11 +42,11 @@ def google_login(request):
 
 Vue에서는 get 방식의 axios로 연결해 보았습니다.
 
-![image-20211003000938752](oauth.assets/image-20211003000938752.png)
+![image-20211003000938752](oauth_spa_dj-rest-auth.assets/image-20211003000938752.png)
 
 그럼 구글 로그인을 클릭해 보겠습니다. 과연?
 
-![image-20211003000842283](oauth.assets/image-20211003000842283.png)
+![image-20211003000842283](oauth_spa_dj-rest-auth.assets/image-20211003000842283.png)
 
 앗, 직접 리다이렉트된 장고 뿐만 아니라, 진짜 origin 요청이 실행된 8080 포트때문에 CORS에 걸렸네요.
 
@@ -57,7 +57,7 @@ const link = `http://localhost:8000/account/${platform}/login`
 location.href = link
 ```
 
-![image-20211003004813169](oauth.assets/image-20211003004813169.png)
+![image-20211003004813169](oauth_spa_dj-rest-auth.assets/image-20211003004813169.png)
 
 굳.
 
@@ -152,7 +152,7 @@ return JsonResponse({'Google Callback Error': 'Invalid email'}, status=status.HT
 
 흠... DRF의 GoogleLoginView를 볼까요.
 
-![image-20211003033100537](oauth.assets/image-20211003033100537.png)
+![image-20211003033100537](oauth_spa_dj-rest-auth.assets/image-20211003033100537.png)
 
 ??? 필요한 파라미터가 하나 더 있었습니다. `id_token`이네요. 이 데이터는 어디 있었는고 하니, code로 요청한 맨 처음의 `token_res`에 있었네요. 직접 몸으로 구르지 않으면 몰랐을 것입니다.
 
@@ -166,7 +166,7 @@ return JsonResponse({'Google Callback Error': 'Invalid email'}, status=status.HT
 
 아니 대체 왜 안되지? DRF에서 해보겠습니다.
 
-![image-20211003033856912](oauth.assets/image-20211003033856912.png)
+![image-20211003033856912](oauth_spa_dj-rest-auth.assets/image-20211003033856912.png)
 
 ????????? 여기서는 로그인이 됩니다.
 
@@ -174,15 +174,15 @@ return JsonResponse({'Google Callback Error': 'Invalid email'}, status=status.HT
 
 ### 415 문제의 해결
 
-![image-20211003040123999](oauth.assets/image-20211003040123999.png)
+![image-20211003040123999](oauth_spa_dj-rest-auth.assets/image-20211003040123999.png)
 
 그럼 먼저 이 문제를 해결합니다. 적절한 헤더 `headers={'Content-Type': 'application/json'}`를 추가해 줍니다.
 
-![image-20211003040240600](oauth.assets/image-20211003040240600.png)
+![image-20211003040240600](oauth_spa_dj-rest-auth.assets/image-20211003040240600.png)
 
 `data=data`로만 해서 위와 같은 문제가 났으니, json 데이터로 변환하여 `data=json.dumps(data)` 넘겨 보겠습니다.
 
-### ![image-20211003040929577](oauth.assets/image-20211003040929577.png)
+### ![image-20211003040929577](oauth_spa_dj-rest-auth.assets/image-20211003040929577.png)
 
 홀리 싯...! 해결했습니다!! 🥳
 
@@ -228,25 +228,25 @@ export const oauthLogin = async (
 
 아무런 개인정보 설정 없이 카카오 로그인을 실행했을 때의 화면입니다.
 
-![image-20211005002917884](oauth.assets/image-20211005002917884.png)
+![image-20211005002917884](oauth_spa_dj-rest-auth.assets/image-20211005002917884.png)
 
 GET 방식으로 사용자 정보를 요청해서 받을 수 있는 것은 id와 연결 시간 뿐입니다.
 
-![image-20211005003003164](oauth.assets/image-20211005003003164.png)
+![image-20211005003003164](oauth_spa_dj-rest-auth.assets/image-20211005003003164.png)
 
 하지만 제 프로젝트에 필요한 것은 조금 더 상세한 정보입니다.
 
-![image-20211005004305945](oauth.assets/image-20211005004305945.png)
+![image-20211005004305945](oauth_spa_dj-rest-auth.assets/image-20211005004305945.png)
 
 프로필에서 필요한 정보는 `kakao_account`인데, 어떻게 받아야 할지 찾아보겠습니다.
 
 개인정보에 닉네임과 프로필 사진을 동의하도록 해 봤습니다.
 
-<img src="oauth.assets/image-20211005004207985.png" alt="image-20211005004207985" style="zoom:67%;" />
+<img src="oauth_spa_dj-rest-auth.assets/image-20211005004207985.png" alt="image-20211005004207985" style="zoom:67%;" />
 
 로그인 버튼을 눌러보겠습니다.
 
-![image-20211005004509642](oauth.assets/image-20211005004509642.png)
+![image-20211005004509642](oauth_spa_dj-rest-auth.assets/image-20211005004509642.png)
 
 동의할 항목이 생겼네요.
 
@@ -254,19 +254,19 @@ GET 방식으로 사용자 정보를 요청해서 받을 수 있는 것은 id와
 
 ```json
 {
-    'id': 1111111111, 
-    'connected_at': '2021-10-04T15:02:47Z', 
+    'id': 1111111111,
+    'connected_at': '2021-10-04T15:02:47Z',
     'properties': {
-        'nickname': '준원', 
+        'nickname': '준원',
         'profile_image': '~~.jpg',
         'thumbnail_image': '~~.jpg'},
     'kakao_account': {
-        'profile_nickname_needs_agreement': False, 
-        'profile_image_needs_agreement': False, 
+        'profile_nickname_needs_agreement': False,
+        'profile_image_needs_agreement': False,
         'profile': {
-            'nickname': '준원', 
-            'thumbnail_image_url': '~~.jpg', 
-            'profile_image_url': '~~.jpg', 
+            'nickname': '준원',
+            'thumbnail_image_url': '~~.jpg',
+            'profile_image_url': '~~.jpg',
             'is_default_image': False}
     }
 }
@@ -276,28 +276,28 @@ GET 방식으로 사용자 정보를 요청해서 받을 수 있는 것은 id와
 
 제 어플리케이션에 로그인하기 위해 필요한 정보는 추가로 email이 있으니, email을 추가로 요청하겠습니다.
 
-![image-20211005005136660](oauth.assets/image-20211005005136660.png)
+![image-20211005005136660](oauth_spa_dj-rest-auth.assets/image-20211005005136660.png)
 
 아쉽게도 이메일의 경우에는 `비즈니스 설정`이 완료된, 실제 서비스일 때에만 필수로 지정할 수 있습니다. 따라서 카카오 계정으로 정보 수집 후 제공까지 체크를 해줍니다. 이 때의 profile 값은 아래와 같습니다.
 
 ```json
 {
-    'id': 1111111111, 
-    'connected_at': '2021-10-04T15:02:47Z', 
+    'id': 1111111111,
+    'connected_at': '2021-10-04T15:02:47Z',
     'properties': {
-        'nickname': '준원', 
+        'nickname': '준원',
         'profile_image': '~~.jpg',
         'thumbnail_image': '~~.jpg'},
     'kakao_account': {
-        'profile_nickname_needs_agreement': False, 
-        'profile_image_needs_agreement': False, 
-        'profile': 
+        'profile_nickname_needs_agreement': False,
+        'profile_image_needs_agreement': False,
+        'profile':
         {
-            'nickname': '준원', 
-            'thumbnail_image_url': '~~.jpg', 
-            'profile_image_url': '~~.jpg', 
+            'nickname': '준원',
+            'thumbnail_image_url': '~~.jpg',
+            'profile_image_url': '~~.jpg',
             'is_default_image': False,
-            'has_email': True, 
+            'has_email': True,
             'email_needs_agreement': True
         }
     }
@@ -306,11 +306,11 @@ GET 방식으로 사용자 정보를 요청해서 받을 수 있는 것은 id와
 
 `has_email`, `email_needs_agreement`라는 항목이 새로 생겼지만 실제 email 값은 받아오지 못하고 있습니다.
 
-![image-20211005005541030](oauth.assets/image-20211005005541030.png)
+![image-20211005005541030](oauth_spa_dj-rest-auth.assets/image-20211005005541030.png)
 
 필요한 경우 추가 항목 동의 받기를 통해 가져올 수 있겠습니다.
 
-제 프로젝트는 비즈니스 앱이 아니기 때문에 이메일을 꼭 선택해야지만 제대로 된 회원가입/로그인이 가능합니다.
+제 프로젝트는 비즈니스 앱이 아니기 때문에 이메일을 꼭 선택해야지만 제대로 된 회원가입/로그인이 가능합니다. 때문에 초기 가입 시 이메일 정보 제공의 동의를 강제해야 하므로, 비즈니스 신청을 해야 합니다.
 
 ## 정리
 
