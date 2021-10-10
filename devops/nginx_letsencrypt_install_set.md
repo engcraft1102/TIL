@@ -19,49 +19,53 @@ include /etc/nginx/sites-enabled/*.conf; // sites-enabled 디렉토리에서 서
 server_names_hash_bucket_size 64; // 도메인이름 분석하는데 할당되는 메모리 양
 ```
 
-### 서버 블록 파일 만들기
+### 서버 블록 파일 만들기 및 설명
 
 `sudo vi /etc/nginx/sites-available/j5d202.p.ssafy.io.conf`
 
+- 기본 포트인 80을 listen하도록 합니다. 기본 포트를 변경하려면 `conf/nginx.conf`의 `listen`을 수정합니다.
+- `HTTPS` 연결을 위해 리다이렉트 해줍니다. 이렇게 하면 443 port로 리다이렉트되어, `server_name`에 설정해 둔 domain에 해당하는 곳으로 요청하게 됩니다.
+- 장고 관련 처리는  `/api/v1` 으로 보낼 것입니다. `proxy_pass`로는 `WSGI` 중 하나인 `gunicorn`의 소켓을 사용하여 처리했으며, 이는 ubuntu에서 `localhost`로 간주됩니다.
+  - (중요!!) 따라서 django의 `settings.py`의 `ALLOWED_HOST`에 localhost가 있어야 합니다!! 그렇지 않으면 에러가 발생합니다. 😕
+- 이로서 클라이언트 측에는 포트 번호 및 정확한 경로를 보여주지 않으면서 올바르게 리다이렉트 할 수 있게 되었습니다.
+
 ```nginx
 server {
-    server_name j5d202.p.ssafy.io www.j5d202.p.ssafy.io;
+        listen 443 ssl;
+        listen [::]:443 ssl;
 
-    root /home/ubuntu/dist;
-    index index.html;
-    location / {
-        try_files $uri $uri/ /index.html;
-    }
+        server_name j5d202.p.ssafy.io www.j5d202.p.ssafy.io;
 
-    location /account {
-        proxy_pass https://localhost:8080;
-        proxy_redirect off;
-        charset utf-8;
+        ssl_certificate /home/ubuntu/docker_volume/fullchain.pem;
+        ssl_certificate_key /home/ubuntu/docker_volume/privkey.pem;
 
-        proxy_set_header   X-Real-IP $remote_addr;
-        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header   X-Forwarded_proto $scheme;
-        proxy_set_header   X-NginX-Proxy true;
-    }
-    location /accounts {
-        proxy_pass https://localhost:8080;
-        proxy_redirect off;
-        charset utf-8;
+        root /home/ubuntu/dist;
 
-        proxy_set_header   X-Real-IP $remote_addr;
-        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header   X-Forwarded_proto $scheme;
-        proxy_set_header   X-NginX-Proxy true;
-    }
+        index index.html;
+
+        location / {
+                try_files $uri $uri/ /index.html;
+        }
+
+        location /api/v1 {
+                proxy_pass http://unix:/home/ubuntu/Together/backend/gunicorn.sock;
+                proxy_redirect off;
+                charset utf-8;
+
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded_proto $scheme;
+                proxy_set_header X-NginX-Proxy true;
+        }
 }
 server {
-    listen 80;
-    listen [::]:80;
+        listen 80;
+        listen [::]:80;
 
-    server_name j5d202.p.ssafy.io www.j5d202.p.ssafy.io;
-    return 301 https://$server_name$request_uri;
+        server_name j5d202.p.ssafy.io www.j5d202.p.ssafy.io;
 
-    index index.html index.htm;
+        return 301 https://$server_name$request_uri;
+        index index.html index.htm;
 }
 
 ```
@@ -169,3 +173,4 @@ nginx 시작
 ## References
 
 - [how-to-set-up-nginx-server-blocks](https://www.digitalocean.com/community/tutorials/how-to-set-up-nginx-server-blocks-on-centos-7#step-three-%E2%80%94-create-new-server-block-files)
+- [ngnix 관련 나중에 보면 좋을 글](https://sarc.io/index.php/nginx/61-nginx-nginx-conf)
