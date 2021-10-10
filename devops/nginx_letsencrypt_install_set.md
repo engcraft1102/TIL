@@ -170,7 +170,13 @@ nginx 시작
 
 ![image-20211005130052820](nginx_letsencrypt_install_set.assets/image-20211005130052820.png)
 
+## Summary
+
+- 2021.10.05 작성
+- 2021.10.10 수정. 내용 추가
+
 ## References
 
 - [how-to-set-up-nginx-server-blocks](https://www.digitalocean.com/community/tutorials/how-to-set-up-nginx-server-blocks-on-centos-7#step-three-%E2%80%94-create-new-server-block-files)
 - [ngnix 관련 나중에 보면 좋을 글](https://sarc.io/index.php/nginx/61-nginx-nginx-conf)
+
