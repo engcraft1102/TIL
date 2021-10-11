@@ -2,7 +2,7 @@
 
 ## MTU (Maximum Transmission Unit)
 
-MTU란 `OSI model`의 3계층, `Network Layer`에서 처리할 수 있는 가장 큰 데이터 블록입니다. 네트워크 인터페이스에서 세크멘트 없이 보낼 수 있는 최대 데이터그램 크기 값입니다.
+MTU란 `OSI model`의 3계층, `Network Layer`에서 처리할 수 있는 가장 큰 데이터 블록입니다. 네트워크 인터페이스에서 세그멘트 없이 보낼 수 있는 최대 데이터그램 크기 값입니다.
 
 우리가 주로 사용하는 이더넷의 MTU 값은 일반적으로 1500 바이트이며, 옛날에 모뎀을 통해 접속하던 PPPoE 연결은 1492 바이트였다고 합니다. `Gigabit MTU `와 같은 `Jumbo Frames`은 1500바이트 이상의 페이로드를 지닌 이더넷 프레임으로, 최대 9000바이트의 페이로드까지 지원합니다.
 
@@ -29,7 +29,7 @@ TCP 프로토콜 연결 시 SYN 패킷을 보낼 때 MSS를 포함하게 됩니�
 
 호스트는 자체 네트워크의 MTU는 확실히 알고 있습니다. 그러나 더 높은 경로에 있는 링크의 MTU를 알 수 있는 방법은 없습니다.
 
-예를 들어 컴퓨터의 `NIC Network Interface Controller`의 MTU는 1500인데, WAN에 연결하는 MTU는 1400인 경우가 있습니다.
+예를 들어 컴퓨터의 `NIC Network Interface Controller`의 MTU는 1500인데, WAN에 연결하는 MTU는 1400인 경우가 있습니다. 컴퓨터의 MTU가 더 커서 전송하지 못하는 상황이 됩니다.
 
 ![A computer will know its own MTU, but not the MTU of a link further up the path](mtu_mss.assets/MTU_MSS-2.png)
 
@@ -51,7 +51,7 @@ TCP 프로토콜 연결 시 SYN 패킷을 보낼 때 MSS를 포함하게 됩니�
 
 ## PMTUD
 
-PMTUD란 목적지로 가는 경로상에 존재하는 링크들 중 MTU값이 가장 작은 링크의 MTU 값을 확인하는 과정을 말합니다. Ipv6에서 패킷의 분할을 위해 사용합니다.
+PMTUD란 목적지로 가는 경로상에 존재하는 링크들 중 MTU값이 가장 작은 링크의 MTU 값을 확인하는 과정을 말합니다. IPv6에서 패킷의 분할을 위해 사용합니다.
 
 IPv6에서는 오직 출발지 장비만이 패킷을 분할할 수 있도록 규정해 놓았습니다. 그 이유는 IPv4에서 목적지로 가는 경로상의 중간 라우터들이 무분별한 분할을 수행하며 발생했던 라우팅 속도 저하와 관련된 문제 때문입니다.
 
@@ -107,6 +107,10 @@ Fragment가 필요하다고 나타납니다. 한번에 전송할 수 있는 값�
 오, 역시 막히네요. 쓸데없는 핑을 다 받아 주면 리소스가 낭비될 테니 당연한 일입니다.
 
 방화벽으로 핑을 허용하고 막는 방법에 대한 글은 [링크](https://www.howtogeek.com/howto/windows-vista/allow-pings-icmp-echo-request-through-your-windows-vista-firewall/)에 있습니다.
+
+
+
+긴 글 읽어 주셔서 감사합니다. 잘못된 내용, 오타는 댓글로 알려주세요. 적극적으로 수정하겠습니다.
 
 ## References
 
