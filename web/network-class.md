@@ -34,7 +34,7 @@ Network: 8bit
 
 Host: 24bit
 
-![image-20211021013422128](network-class.assets/image-20211021013422128.png)
+![image-20211021013422128](network-class.assets/image-20211021013422128.png "출처: https://wonit.tistory.com/554")
 
 A Class는 하나의 네트워크가 가질 수 있는 호스트 수가 제일 많기 때문에 대규모 네트워크 집단에서 사용했습니다.
 
@@ -57,14 +57,12 @@ Network: 16bit
 
 Host: 16bit
 
-![image-20211021014523900](network-class.assets/image-20211021014523900.png)
+![image-20211021014523900](network-class.assets/image-20211021014523900.png "출처: https://wonit.tistory.com/554")
 
 중규모의 네트워크 집단에서 사용했습니다.
 
 B클래스는 반드시 10으로 시작합니다. 2진수로 표현하면 `10xx xxxx. xxxx xxxx. xxxx xxxx. xxxx xxxx`입니다.
 B클래스의 IP 범위는 `128.0.0.0 ~ 191.255.255.255`이고 네트워크 범위는 `10xx xxxx. xxxx xxxx`에서 x들이 가질 수 있는 경우의 수인 2^14개입니다. 다르게 계산해 보면 첫 번째 옥텟의 범위는 `128 ~ 191`이고, 두 번째 옥텟은 8bit (256) 이므로 2^6 \* 2^8 = 2^14(16384)개가 되겠습니다. 호스트 주소 범위는 16bit로 2^16 - 2개입니다.
-
-
 
 ### C클래스
 
@@ -72,7 +70,7 @@ Network: 24bit
 
 Host: 8bit
 
-![image-20211021014822944](network-class.assets/image-20211021014822944.png)
+![image-20211021014822944](network-class.assets/image-20211021014822944.png "출처: https://wonit.tistory.com/554")
 
 소규모의 네트워크 집단에서 사용했습니다.
 
@@ -82,7 +80,7 @@ C클래스는 반드시 110으로 시작합니다. 첫 번째 옥텟은 `192 ~ 2
 
 특수한 목적(실험, 연구, 개발)으로 이미 예약되어 있는 구간입니다.
 
-![image-20211021014836783](network-class.assets/image-20211021014836783.png)
+![image-20211021014836783](network-class.assets/image-20211021014836783.png "출처: https://wonit.tistory.com/554")
 
 
 ### 추가) 클래스 계산 간단하게 하는 방법
@@ -121,7 +119,7 @@ IPv4의 경우 `127.0.0.0 ~ 127.255.255.255`이며, 보통 `127.0.0.1`을 사용
 
 ## 연습문제 풀어보기
 
-다음 IP를 보고 클래스, 네트워크 부분, 호스트 부분을 말하시오.
+다음 IP를 보고 클래스, 네트워크 부분, 호스트 부분을 맞춰 보세요.
 
 <details>
 <summary>10.3.4.3</summary>
@@ -165,7 +163,6 @@ IPv4의 경우 `127.0.0.0 ~ 127.255.255.255`이며, 보통 `127.0.0.1`을 사용
 존재할 수 없는 IP 주소입니다.
 </div>
 </details>
-
 ## References
 
 - https://kim-dragon.tistory.com/9
