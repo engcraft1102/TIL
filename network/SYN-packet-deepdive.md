@@ -1,4 +1,4 @@
-# SYN 패킷 처리 딥다이브 🐋
+# SYN 패킷 처리 딥다이브(번역 + 추가) 🐋
 
 3 way handshake은 정확한 전송을 보장하기 위해 단말 간에 세션을 수립하는 과정입니다. `SYN synchronization packet`과 `ACK acknowledgment packet`을 사용합니다. 클라이언트에서 SYN(a)을 보내고, 서버는 SYN(b), ACK(a+1)을 보내고, 클라이언트는 다시 ACK(b+1)을 보냅니다.
 
@@ -6,14 +6,14 @@
 
 ## 이 글은 🤔
 
-궁금증을 해결하기 위해 검색하다가 찾은 [SYN에 대한 정말 좋은 글(영문)](https://blog.cloudflare.com/syn-packet-handling-in-the-wild/)을 보고, 부가적인 설명을 곁들이며 정리한 글입니다. 
+궁금증을 해결하기 위해 검색하다가 찾은 [SYN에 대한 정말 좋은 글(영문)](https://blog.cloudflare.com/syn-packet-deepdive-handling-in-the-wild/)을 보고, 부가적인 설명을 곁들이며 정리한 글입니다.
 
-실제 서버 운영 경험이 많은 `Cloudflare`에서 이와 관련해 `깊게 파헤치는(원문: black art)` 것을 게을리하지 않아 준 것이 감사하네요. [이 글의 번역](https://blog.cloudflare.com/ko-kr/syn-packet-handling-in-the-wild-ko-kr/)에서도 큰 도움을 받았습니다.
+실제 서버 운영 경험이 많은 `Cloudflare`에서 이와 관련해 `깊게 파헤치는(원문: black art)` 것을 게을리하지 않아 준 것이 감사하네요. [이 글의 번역](https://blog.cloudflare.com/ko-kr/syn-packet-deepdive-handling-in-the-wild-ko-kr/)에서도 큰 도움을 받았습니다.
 
 - 클라우드플레어는 미국 소재의 CDN 서비스와 DNS 서비스를 제공하는 기업으로, 본사는 미국 샌프란시스코에 있습니다.
 - 2021년 기준 전 세계 웹사이트 5개 중 1개가 클라우드플레어의 `Reverse Proxy` 서비스와 `DNS server`를 사용할 정도인 인터넷업계의 거인입니다.
 
-이 글을 이해하기 위한 TCP 3 way handshake에 관해서는 [제 전 포스팅]()을 읽어 주세요.
+이 글을 이해하기 위한 TCP 3 way handshake에 관해서는 [제 전 포스팅](https://jdev.tistory.com/92)을 읽어 주세요.
 
 ## 들어가며
 
@@ -21,7 +21,7 @@
 
 ## 두 개의 큐에 대한 이야기
 
-![all-1](SYN-packet.assets/all-1.jpeg)
+![all-1](SYN-packet-deepdive.assets/all-1.jpeg)
 
 `listen이나 연결을 위한 준비 상태의 소켓 (bound socket)`은 `LISTENING` TCP 상태에 두 개의 분리된 큐를 가집니다.
 
@@ -47,7 +47,7 @@ tcp_synack_retries - 정수
 수동 TCP 연결 시도에 대해서 SYN+ACK를 몇번 다시 보낼지를 지정한다.
 이 값은 255 이하이어야 한다. 기본값은 5이며, 1초의 초기 RTO값을 감안하면
 마지막 재전송은 31초 후에 일어난다. 이는 수동 TCP 연결의 최종 타임아웃은
-63초 이후에 일어난다는 것을 의미한다. 
+63초 이후에 일어난다는 것을 의미한다.
 ```
 
 이를 표로 나타내면:
@@ -66,7 +66,7 @@ tcp_synack_retries - 정수
 
 즉, `net.ipv4.tcp_synack_retries` 값이 디폴트인 5로 설정되어 있다면 한 세션당 타임아웃 값은 63초가 됩니다.
 
-SYN+ACK를 전송한 뒤에 SYN 큐는 3방향 악수의 마지막 단계인 클라이언트로부터의 ACK 패킷을 기다립니다. 수신된 ACK 패킷은 모두 완전히 수립된 연결 테이블에서 찾을 수 있어야 하며 관련된 SYN 큐에는 없어야 합니다. 
+SYN+ACK를 전송한 뒤에 SYN 큐는 3방향 악수의 마지막 단계인 클라이언트로부터의 ACK 패킷을 기다립니다. 수신된 ACK 패킷은 모두 완전히 수립된 연결 테이블에서 찾을 수 있어야 하며 관련된 SYN 큐에는 없어야 합니다.
 
 SYN 큐에서 찾을 수 있다면, 커널은 해당 연결을 SYN 큐에서 제거하고 완전히 수립된 연결을 만들어 (struct inet_sock) Accpet Queue에 추가합니다.
 
@@ -118,7 +118,7 @@ $ ss -n state syn-recv sport = :443 | wc -l
 
 ## 느린 애플리케이션
 
-![img](SYN-packet.assets/full-accept-1.jpeg)
+![img](SYN-packet-deepdive.assets/full-accept-1.jpeg)
 
 애플리케이션이 `accept()`를 충분히 빠르게 호출하지 못한다면 어떻게 될까요?
 
@@ -142,7 +142,7 @@ $ nstat -az TcpExtListenDrops
 TcpExtListenDrops     49199     0.0
 ```
 
-이 값은 전체 카운터입니다. 모든 애플리케이션이 별 문제 없어보이는데도 이 값이 증가하는 것이 종종 보인다면  좋은 상황은 아닐 것입니다. 가장 먼저 할 일은 `ss`로 Accept 큐 크기를 살펴보는 것입니다.
+이 값은 전체 카운터입니다. 모든 애플리케이션이 별 문제 없어보이는데도 이 값이 증가하는 것이 종종 보인다면 좋은 상황은 아닐 것입니다. 가장 먼저 할 일은 `ss`로 Accept 큐 크기를 살펴보는 것입니다.
 
 ```
 $ ss -plnt sport = :6443|cat
@@ -165,19 +165,19 @@ time (us)        acceptq qmax  local addr    remote_addr
 
 이제 ListenDrops에 영향을 미치는 SYN 패킷을 정확하게 알 수 있습니다. 이 스크립트를 통해 어떤 애플리케이션이 연결을 버리고 있는지 쉽게 알 수 있습니다. 느린 애플리케이션 컽!
 
-![img](SYN-packet.assets/3713965419_20388fb368_b.jpg)
+![img](SYN-packet-deepdive.assets/3713965419_20388fb368_b.jpg)
 
 ## SYN Flood
 
-![full-syn-1](SYN-packet.assets/full-syn-1.jpeg)
+![full-syn-1](SYN-packet-deepdive.assets/full-syn-1.jpeg)
 
 Accept 큐 오버플로가 가능하다면 SYN 큐 오버플로도 가능하겠죠? 어떤 경우일까요?
 
 바로 [SYN Flood attacks](https://en.wikipedia.org/wiki/SYN_flood)입니다. 예전에는 SYN 큐를 위조된 SYN 패킷으로 넘치게 하는 것이 큰 문제였습니다. 1996년 이전에는 SYN 큐를 채우는 것만으로 대부분의 TCP 서버를 매우 적은 대역폭만으로 서비스 불능으로 만들 수 있었습니다.
 
-![img](SYN-packet.assets/220px-Tcp_synflood.png)
+![img](SYN-packet-deepdive.assets/220px-Tcp_synflood.png)
 
-*사진: https://en.wikipedia.org/wiki/SYN_flood
+\*사진: https://en.wikipedia.org/wiki/SYN_flood
 공격자는 ACK를 다시 보내지 않는 수많은 SYN 패킷을 보냅니다. 서버는 클라이언트의 연결을 받아들이기 위해 RAM 공간을 확보해서 대기하는데, ACK가 오지 않으니 RAM이 꽉 차게 되고, 정상적인 사용자의 SYN을 받지 못하게 됩니다.
 
 이 문제의 해결책은 [SYN 쿠키](https://lwn.net/Articles/277146/)입니다. SYN 쿠키는 수신 SYN을 저장하지 않고 메모리 소비 없이 SYN+ACK를 만들 수 있는 방법입니다. SYN 쿠키는 정상적인 트래픽을 방해하지 않습니다.
@@ -195,7 +195,7 @@ SYN 쿠키는 좋지만 부작용이 없는 것은 아닙니다. 주된 문제�
 
 MSS 값을 [4가지만](https://github.com/torvalds/linux/blob/5bbcc0f595fadb4cac0eddc4401035ec0bd95b09/net/ipv4/syncookies.c#L142) 정할 수 있게 되면서 리눅스는 상대방의 다른 TCP 옵션 파라미터를 알 수 없습니다. 타임스탬프, ECN, 선택적인 ACK(SACK), 윈도우 크기 변경 정보를 잃게 되어 TCP 세션 성능을 저하하는 요인이 됩니다.
 
-다행히 리눅스에는 대책이 있습니다. 만약 TCP 타임스탬프가 켜져 있다면 이 32비트를 다른 용도로 재사용하여 이 문제를 해결할 수 있습니다. 
+다행히 리눅스에는 대책이 있습니다. 만약 TCP 타임스탬프가 켜져 있다면 이 32비트를 다른 용도로 재사용하여 이 문제를 해결할 수 있습니다.
 
 ```
 +-----------+-------+-------+--------+
@@ -208,7 +208,7 @@ tcp 타임스탬프는 기본적으로 이용 가능한 상태이기 때문에, 
 
 ```
 $ sysctl net.ipv4.tcp_timestamps
-net.ipv4.tcp_timestamps = 1 
+net.ipv4.tcp_timestamps = 1
 ```
 
 타임스탬프 기능이 활성화되어 있을 경우 타임스탬프 공간의 재활용이 가능하기 때문에 통신 간 대역폭이 조금 더 사용할 수 있습니다. 다만 타임스탬프의 유용성에 대해 많은 논의가 있습니다.
@@ -221,7 +221,7 @@ net.ipv4.tcp_timestamps = 1
 
 ## Cloudflare 스케일의 SYN 홍수
 
-![img](SYN-packet.assets/Screen-Shot-2016-12-02-at-10.53.27-1.png)
+![img](SYN-packet-deepdive.assets/Screen-Shot-2016-12-02-at-10.53.27-1.png)
 
 SYN 쿠키는 위대한 발명이고 **소규모의** SYN Flood 문제를 해결해 줍니다. 하지만 Cloudflare에서는 사용하지 않습니다. 암호학적으로 확인 가능한 수천의 SYN+ACK 패킷을 보내는 것은 괜찮지만, 대형 서비스인 Cloudflare는 [초당 2억 패킷 이상의 공격](https://blog.cloudflare.com/the-daily-ddos-ten-days-of-massive-attacks/)을 받기 때문입니다. 이런 규모의 경우 SYN+ACK의 응답은 쓸모 없는 패킷만 양산할 뿐 큰 의미가 없다고 합니다.
 
@@ -243,6 +243,5 @@ SYN에 대해 딥다이브 해 보았습니다. 생소한 개념이 많아 이�
 
 ## References
 
-- https://blog.cloudflare.com/syn-packet-handling-in-the-wild/ (영문)
-- https://blog.cloudflare.com/ko-kr/syn-packet-handling-in-the-wild-ko-kr/ (번역)
-
+- https://blog.cloudflare.com/syn-packet-deepdive-handling-in-the-wild/ (영문)
+- https://blog.cloudflare.com/ko-kr/syn-packet-deepdive-handling-in-the-wild-ko-kr/ (번역)
