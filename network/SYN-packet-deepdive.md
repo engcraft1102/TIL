@@ -68,9 +68,9 @@ tcp_synack_retries - 정수
 
 SYN+ACK를 전송한 뒤에 SYN 큐는 3방향 악수의 마지막 단계인 클라이언트로부터의 ACK 패킷을 기다립니다. 수신된 ACK 패킷은 모두 완전히 수립된 연결 테이블에서 찾을 수 있어야 하며 관련된 SYN 큐에는 없어야 합니다.
 
-SYN 큐에서 찾을 수 있다면, 커널은 해당 연결을 SYN 큐에서 제거하고 완전히 수립된 연결을 만들어 (struct inet_sock) Accpet Queue에 추가합니다.
+SYN 큐에서 찾을 수 있다면, 커널은 해당 연결을 SYN 큐에서 제거하고 완전히 수립된 연결을 만들어 (struct inet_sock) Accept Queue에 추가합니다.
 
-## Accpet Queue
+## Accept Queue
 
 Accept 큐는 애플리케이션이 언제라도 가져갈 수 있도록 완전히 수립된 연결을 저장하고 있습니다. 프로세스가 `accept()`를 호출하면 이 큐에서 소켓을 제거하며 애플리케이션에게 전달합니다.
 
@@ -78,7 +78,7 @@ Accept 큐는 애플리케이션이 언제라도 가져갈 수 있도록 완전�
 
 ## 큐 크기 제한
 
-Accept와 SYN 큐의 최대 크기는 애플리케이션이 호출하는 `listen` 시스템 콜의 `backlog` 파라미터로 전달되는 값으로 설정됩니다. 예를 들어 다음은 SYN와 Accpet 큐 크기를 1024로 지정합니다.
+Accept와 SYN 큐의 최대 크기는 애플리케이션이 호출하는 `listen` 시스템 콜의 `backlog` 파라미터로 전달되는 값으로 설정됩니다. 예를 들어 다음은 SYN와 Accept 큐 크기를 1024로 지정합니다.
 
 ```
 listen(sfd, 1024)
