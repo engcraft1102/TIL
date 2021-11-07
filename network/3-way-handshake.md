@@ -1,4 +1,4 @@
-# Three Way HandShake의 이해
+# Three Way HandShake의 이해 (번역)
 
 [이 글(영문)](https://www.guru99.com/tcp-3-way-handshake.html#2)을 정리해서 옮긴 글입니다.
 
