@@ -62,7 +62,7 @@ IP 주소는 IP 클래스에 의해 분리되는 Network Prefix와 Host Number�
 
 위와 같은 조건이라면 FLSM을 한다면 가장 큰 크기인 개발부에 맞춰서 자르게 되고, 다른 부서에는 너무 많은 IP가 남게 되어 낭비가 됩니다. 이러한 경우를 피하기 위해 각 부서 별로 필요한 만큼만 잘라서 사용해 보겠습니다.
 
-![image-20211029012524984](subnet-mask_subnetting.assets/image-20211029012524984.png)
+![image-20211110015751399](subnet-mask_subnetting.assets/image-20211110015751399.png)
 
 이와 같이 다양한 길이의 서브넷 마스크가 되겠습니다.
 
