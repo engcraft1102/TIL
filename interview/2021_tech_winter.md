@@ -1,25 +1,123 @@
 ## CS
 
 - 브라우저 주소창에 www.google.com을 입력하면 어떤 일이 일어나나요?
+
+  ![url](2021_tech_winter.assets/EgBWI0GWAAAeYhA.jpeg)
+
+  - 브라우저가 URL을 파싱
+    - Protocol
+    - domain
+    - port
+    - path
+    - parameter
+  - DNS에서 IP 주소를 가져온다.
+    - 맨 처음 ISP 서버에서 캐시 데이터가 없으면 루트 DNS 서버에게 요청
+    - 루트 서버는 요청한 URL에 맞는 `TLD Top Level Domain name server` 로 안내 (.com)
+    - ISP 서버는 그 다음 도메인(example)을 요청
+    - 또 그 다음을 요청하면 `IP = 1.1.1.1` 의 형태로 도메인을 리턴, 동시에 ISP 서버는 해당 정보를 캐시로 기록해 둠
+    - TCP 커넥션 시작 (3 way handshaking). connection
+    - HTTPS는 TLS handshake 추가
+    - HTTP Request를 보내면, 그에 맞는 Response를 받고 렌더링 시작
+
 - DNS에 대해 설명해주세요.
+
+  - Domain Name System.
+
 - DOM이란 무엇인가요?
+
+  - Document Object Model
+  - HTML/XML 문서에 접근하기 위한 인터페이스
+
+- 3 way handshaking
+
+  - 클라이언트와 서버 간의 통신을 위한 연결 과정
+  - 클라이언트가 SYN(a) 패킷을 송신. 
+  - 서버는 그걸 받고, SYN(b), ACK(a+1) 패킷 송신
+  - 클라이언트는 ACK(b+1) 송신
+
+- 4 way handshaking
+
+  - 연결을 종료하는 과정
+  - 클라이언트는 FIN 플래그 전송
+  - 서버는 ACK 전성, 데이터를 모두 보낼 떄까지 Time out
+  - 데이터를 모두 보내면 FIN 플래그 전송
+  - 클라이언트는 ACK 전송
+  - 클라이언트의 상태가 FIn-WAIT - TIME-WAIT로 바뀜
+    - Server에서 FIN을 전송하기 전에 전송한 패킷이 라우팅 지연이나 패킷 유실로 인해 데이터 유실이 일어날 수 있다. 이런 상황을 대비해서 클라이언트는 일정 시간 동안 세션을 남겨두고 잉여 패킷을 기다린다.
+
 - HTTP에 대한 기초적인 이해 (Req, Res, HTTP Status Code)
+
 - HTTPS에 대한 기초적인 이해
-- 정적 서버와 CDN에 대한 기초적인 이해
+
+- 웹 서버란?
+
+  - 정적 컨텐츠 제공 혹은 동적 컨텐츠 제공을 위한 요청 전달
+  - Apache, Nginx 등
+
+- Web Application Server란?
+
+  - DB 조회 및 다양한 로직 처리에 따른 동적인 컨텐츠를 제공
+  - Tomcat, JBoss
+
+- CDN이란?
+
+  - Content Delivery Network | Content Distribution Network
+  - 지리적 제약 없이 전 세계에 빠르게 콘텐츠를 전송. 서버와 사용자 사이의 `물리적인 거리`를 줄인다.
+
 - 객체지향 프로그래밍이란 무엇인가요?
+
 - 프로세스와 스레드에 대해 설명
+
+  - 프로세스는 실행 중인 프로그램. 스레드는 복잡한 프로그램을 실행하기 위한 더 작은 실행 단위. 프로세스 안에 스레드가 포함된다.
+  - 스레드는 Code, Data, Heap을 공유한다. 그래서 컨텍스트 스위칭의 비용이 적지만, 오류가 날 경우 스레드 전체에 퍼질 가능성이 높다.
+
 - stack과 queue에 대해 설명
+
+  - Stack
+    - FILO. 먼저 넣은 것이 나중에 빠진다.
+  - Queue
+    - FIFO. 먼저 넣은 것이 먼저 빠진다.
+
 - list와 map에 대해 설명
+
+  - list
+    - List는 Memory 안의 특정한 동일 공간에 뭉텅이로 저장. 내부 구현이 배열로 되어 있기 때문.
+    - 따라서 저장 공간만 있다면 저장 속도는 빠르다
+  - map
+    - 뭉텅이로 저장하는 것이 아니라 아이템을 저장할 때마다 빈공간을 찾아 저장.
+    - key와 value를 사용. 단순히 포지션이라기 보다는 Key값이 필요할 때 map을 사용
+
 - linked list와 hash에 대해 설명
-- sorting algorithms에 대한 설명.
+
+  - linked list
+  - hash
+
+- sorting algorithms
+
+  - stable한 정렬이란?
+    - 중복 데이터가 있을 경우 데이터의 위치를 교환하지 않는 정렬
+    - Bubble, Insertion
+  - unstable 정렬?
+    - Selection
+
 - 가장 즐겨 쓰는 정렬 알고리즘은?
+
 - RESTful API란?
+
+  - 클라이언트와 서버가 통신하는 것의 컨벤션이라고 생각합니다. 혼자서만 개발한다면, 뭐 /kakaobrain을 붙인 경우에 모든 학생 리스트를 응답으로 받아오는 endpoint도 정할 수야 있죠. 그런데 다른 사람이 보면, 아니 도저히 알아볼수가 없다는 것이 문제입니다. REST하게 API를 짜면, HTTP 메서드와 URL만 봐도 대충 어떤 요청일지 예상이 가도록 직관적으로 구성합니다.
+
 - Docker 컨테이너에 대한 기초적인 이해
+
 - HTML과 웹 표준에 대해
+
 - 호스팅 서버에 대한 기초적인 이해
+
 - 브라우저별 특성
+
 - 웹 표준은 무엇이며 왜 준수해야 하나요?
+
 - 웹 접근성은 무엇이며 개선을 위해서는 어떻게 해야할까요?
+
 - DOM Event에 대해서 이해하고 있나요?
 
 
@@ -27,17 +125,51 @@
 
 - 자바스크립트의 언어적 특성
 
+  - 객체 기반의 스크립트 언어.
+  - Mocha - LiveScript - JavaScript
+  - 동적이며, 타입을 명시할 필요가 없는 인터프리터 언어
+  - 객체 지향형 프로그래밍과 함수형 프로그래밍 모두 표현 가능
+  - 컴파일 언어와 다르게, 소스코드를 바로 실행할 수 잇음. JS는 브라우저의 JS 인터프리터가 직접 해석하여 바로 실행해 준다.
+
 - 변수란 무엇인가요?
+
+  - let
 
 - var, let, const 차이
 
+  - var: ES6 이전에 사용되던 변수 선언
+  - let: 재할당 가능, 재선언 불가
+  - const: 둘다 불가. 말그대로 constant
+
 - hoisting은 무엇인가요?
+
+  - 모든 선언을 가장 위로 끌어올리는 것
+  - 전역 범위의 경우 스크립트 최상단, 함수 범위에서는 해당 함수의 최상단
+  - 함수 선언식의 경우, 
+
+- 콜백 지옥 해결 방법
+
+  - depth가 너무 깊어진다.
+  - async, await, promise를 사용하자.
 
 - Fetch API의 특성
 
-- Promise와 Callback의 차이
+  ### GET
 
-- 콜백 지옥 해결 방법
+  `fetch(url, options).then((response)).catch((error))`
+
+  ### POST, PUT, DELETE
+
+  ```js
+  fetch(url, {
+      method: "POST",
+      header: {
+          'Content-Type': 'application/json'
+      }
+  })
+  ```
+
+- Promise와 Callback의 차이
 
 - async, await 사용 방법
 
@@ -57,21 +189,148 @@
 
 - 자바스크립트의 원시 타입(Primitive Data Type)은 몇가지이며, 전부 말하라
 
+  - undefined, null, boolean, number, string, symbol, object
+
+  - 원시 값은 불변하다.
+
+    ```js
+    // string
+    let bar = 'bar'
+    console.log(bar) // bar
+    bar.toUpperCase()
+    console.log(bar) // bar
+    
+    // number
+    let foo = 5
+    function addTwo(num) {
+    	num += 2
+    }
+    
+    const addTwo_v2 = num => num += 2
+    
+    console.log(foo)
+    addTwo(foo)
+    console.log(foo)
+    addTwo_v2(foo)
+    console.log(foo)
+    ```
+
+  - 이렇게 되는 이유? 
+
+    - 함수를 실행하기 전에, JS는 원래 전달된 인수(원시 값)을 복사해서 로컬 복사본을 생성한다. 이러한 복사본은 함수의 스코프 내에서만 존재하며, 함수 정의 내에 지정한 식별자를 통해 접근 가능하다.
+    - 그 후 함수의 구문들이 실행된다.
+    - 첫 번째 함수에 로컬 num 인수가 생성되고, 두 번째 함수도 마찬가지다.
+    - 이 경우, 외부 변수인 `foo`에는 어떤 방법으로든 접근할 수 없다. 이는 자스의 `lexical scope`와 결과 변수 섀도잉 때문이다.
+
+  - 결과적으로, 함수들 내부의 모든 변경은 그 복사본으로 작업했기 때문에, 원본 `foo`에 전혀 영향을 주지 않았다.
+
 - 자바스크립트의 Number Type은 다른 언어와의 차이점? 왜 하나만 존재하나요?
+
+  - 어떤 숫자든 변수, 상수에 할당하면 자동으로 number type이 된다.
+  - 1/0 => Infinity
+  - -1/0 => -Infinity
+  - 'not a number' / 2 => NaN
+  - JavaScript의 number는 `-2**53 ~ 2**53`까지 지원된다.
+    - 그런데 숫자 끝에 n을 붙이거나 BigInt()를 호출하면 `bigint`가 지원된다. 아직까지는 흔치 않음
 
 - 자바스크립트의 타입 컨버팅에 대해 설명
 
 - 자바스크립트가 유동적인 언어인 이유?
 
+  - Dynamic typed language
+
+  - 자바스크립트는 선언할 때 어떤 타입인지 설정하지 않고, 런타임 때(프로그램이 동작할 때) 할당된 값에 따라서 타입이 변경될 수 있다.
+
+    - 빠르게 프로토타입할 때에는 좋은 언어이지만, 다수의 엔지니어가 협업할 때에는 문제가 생길 여지가 크다.
+
+    ```js
+    let text = 'hello'
+    console.log(text) // hello
+    text = '7' + 5
+    console.log(text, typeof text) // 75, string
+    text = '8' / '2'
+    console.log(text, typeof text) // 4, number
+    ```
+
+    - 이래서 `TypeScript`가 나오게 되었다.
+
 - Prototype에 대해
 
-- 깊은 복사와 얕은 복사에 대해
+  - 유전자.
+  - Prototype은 
+
+- 깊은 복사와 얕은 복사
+
+  - 객체가 nested하게 있을 경우, 원시값은 값을 복사할 때 다른 메모리에 할당하기 때문에 원래의 값과 복사된 값이 서로에게 영향을 미치지 않는다.
+  - 그러나 참조값 (Object, Symbol)의 경우, 변수가 객체의 주소를 가리키는 값이기 때문에 복사된 값이 같은 값을 가리키게 된다.
+    - 얕은 복사: 객체를 복사할 때 원본 객체를 참조하는 경우
+    - 깊은 복사: 객체 안에 객체가 있어도 원본과의 참조가 완전히 끊어진 객체
+      - 재귀함수 복사
+      - JSON.stringfy() 로 복사
+      - `lodash`라이브러리 사용, `_.cleanDeep()`
 
 - 불변성을 유지하려면?
+
+  - `Boolean, Number, String, null, undefined, Symbol은 immutable`, `Object는 mutable`하다
+
+    - 불변성을 지키면서 복사하기 위해서는, 우선 1depth까지는 spread 문법으로도 가능하다. `{...obj}`
+
+  - `immer` 라이브러리를 사용하면 간단하게 불변성을 유지할 수 있다.
+
+    ```js
+    import produce from 'immer'
+    const obj = {
+        name: 'obj1',
+        nest: {
+            name: 'nest1'
+        }
+    }
+    
+    const copy_obj = produce(obj, (draft) => {
+        draft.name = 'obj2'
+        draft.nest.name = 'nest2'
+    })
+    ```
 
 - this에 대해 설명
 
 - JavaScript 엔진은 어떻게 동작하나요?
+
+- 디바운싱 debouncing
+
+  - 쿼리를 입력마다 날리면 손해가 크다. 따라서 input 이벤트에 setTimeout으로 일정 ms 이상 입력이 없을 때 입력이 끝난 것으로 친다.
+
+  ```js
+  let timer
+  if (timer) {
+      cleartimeout(timer)
+  }
+  timer = setTimeout(() => {
+  	// ajax 요청
+  }, 200)
+  ```
+
+- 쓰로틀링 throttling
+
+  - 스크롤을 올리거나 내릴 때 보통 사용
+  - 마지막 함수가 호출된 후 일정 시간이 지나기 전에 다시 호출되지 않도록 하는 것
+
+  ```js
+  let timer
+  if (!timer) {
+      timer = setTimeout(() => {
+          timer = null;
+          // ajax 요청
+      }, 200)
+  }
+  ```
+
+- 함수형 프로그래밍
+
+  - 객체지향 프로그래밍과는 다르다. 함수형 프로그래밍의 원칙은 아래와 같다.
+    - 입출력이 순수해야 한다. (순수함수)
+    - 부작용(부산물)이 없어야 한다.
+    - 함수와 데이터를 중점으로 생각한다.
 
   
 
@@ -110,6 +369,8 @@
 ## Frontend
 
 - 브라우저 렌더링 과정을 설명해 주세요.
+  - Resource를 받았으니, 이제는 그려낼 차례입니다.
+  - 
 - 브라우저는 어떻게 동작하나요?
 - Webpack, Babel, Polyfill에 대해
 - CSR과 SSR의 차이
@@ -120,7 +381,7 @@
 - 쿠키와 세션에 대한 설명
 - 로그인 처리를 할 때 쿠키와 세션을 어떻게 사용하시나요?
 - 이벤트 루프와 task queue에 대해
-- bundle 사이즈를 줄이려면
+- bundle 사이즈를 줄이려면?
 - network 탭에서 font를 보고, CDN으로 변환했던 기억
 - 타입스크립트를 사용하는 이유?
 - 크로스 브라우징 경험

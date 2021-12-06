@@ -1,0 +1,54 @@
+<script>
+  // Selection Sort
+  // 항상 시간복잡도 O(n^2)
+  function selectionSrot(array) {
+    for (let i = 0; i < array.length; i++) {
+      let minIdx = i;
+      for (let j = i + 1; j < array.length; j++) {
+        if (array[minIdx] > array[j]) {
+          minIdx = j;
+        }
+      }
+      if (minIdx !== i) {
+        let temp = array[minIdx];
+        array[minIdx] = array[i];
+        array[i] = temp;
+      }
+    }
+    return array;
+  }
+  console.log(selectionSrot([5, 4, 3, 2, 1, 7, 6]));
+  // 삽입 정렬
+  // 이미 정렬되었을 경우 시간복잡도 O(n)
+  function insertionSort(array) {
+    for (let i = 1; i < array.length; i++) {
+      let cur = array[i];
+      let left = i - 1;
+
+      while (left >= 0 && array[left] > cur) {
+        array[left + 1] = array[left];
+        left--;
+      }
+      array[left + 1] = cur;
+    }
+    return array;
+  }
+  console.log(insertionSort([5, 4, 3, 2, 1, 7, 6]));
+  function bubbleSort(array) {
+    for (let i = 0; i < array.length; i++) {
+      let temp;
+      for (let j = 0; j < array.length - 1 - i; j++) {
+        if (array[j] > array[j + 1]) {
+          temp = array[j];
+          array[j] = array[j + 1];
+          array[j + 1] = temp;
+        }
+      }
+      if (!temp) {
+        break;
+      }
+    }
+    return array;
+  }
+  console.log(bubbleSort([5, 4, 3, 2, 1, 7, 6, 8]));
+</script>
