@@ -21,7 +21,8 @@
 
 - DNS에 대해 설명해주세요.
 
-  - Domain Name System.
+  - Domain Name System
+  - 사람이 읽기 편한 Domain을 기계가 읽을 수 있는 IP 주소로 변환하는 것
 
 - DOM이란 무엇인가요?
 
@@ -46,6 +47,9 @@
     - Server에서 FIN을 전송하기 전에 전송한 패킷이 라우팅 지연이나 패킷 유실로 인해 데이터 유실이 일어날 수 있다. 이런 상황을 대비해서 클라이언트는 일정 시간 동안 세션을 남겨두고 잉여 패킷을 기다린다.
 
 - HTTP에 대한 기초적인 이해 (Req, Res, HTTP Status Code)
+
+  - Hyper Text Transfer Protocol
+  - 인터넷에서 데이터를 주고받을 수 있는 프로토콜(규칙)
 
 - HTTPS에 대한 기초적인 이해
 
@@ -181,7 +185,14 @@
 
 - 이벤트 캡처링
 
-- 클로저에 대한 설명
+- 클로저closure 에 대한 설명
+
+  - 함수와 해당 함수가 선언된 환경의 조합
+  - 이로 인해 자바스크립트의 함수는 외부 변수를 기억하고, 접근할 수 있다. 렉시컬 환경이 사라지지 않았기 때문이다.
+  - 중첩 함수 중,
+    - 상위 스코프의 식별자를 참조하고 있고
+    - 본인의 외부 함수보다 더 오래 살아있다면
+    - 이 함수는 클로져
 
 - 렉시컬 환경에 대해 설명
 
@@ -294,6 +305,31 @@
 
 - this에 대해 설명
 
+  - 자바스크립트에서 this는 `자기 자신`이라는 말이 참 모호하다. JS의 함수는 일급 객체이다.
+  - 암시적 바인딩을 하면 참 어려워진다.
+
+  ```js
+  const obj = {
+      name: 'obj',
+      getName() {
+          return this.name;
+      }
+  }
+  
+  function showValue(callback) {
+      console.log(callback());
+  }
+  
+  showValue(obj.getName); //undefined
+  ```
+
+  - 그래서 명시적 바인딩이 있다. call, apply, bind를 통해 명시적으로 this를 바인딩 할 수 잇다.
+  - call(context, arg1, arg2)
+    - call 같은 경우 인수를 하나하나 넣고
+  - apply(context, args)
+    - 배열 형태로 넣는다.
+  - bind(context, args, arg2 ...)
+
 - JavaScript 엔진은 어떻게 동작하나요?
 
 - 디바운싱 debouncing
@@ -337,23 +373,131 @@
 ## React
 
 - Virtual DOM 작동 원리
+  - Virtual DOM은 쉽게 말해 DOM의 복사본입니다. real DOM과 같은 속성(class 등)을 가지지만, 같은 힘(getElementById 등)은 가지지 않습니다. 즉, 실제 DOM이 갖고 있는 api는 갖고 있지 않습니다.
+  - 데이터가 변경되면 전체 UI는 virtual DOM에 렌더링됩니다. 그리고 이전 virtual DOM의 diff만을 Re-render합니다.
 - Virtual DOM이 무엇인가요?
+  - Virtual DOM은 html 객체에 기반한 자바스크립트 객체라고 할 수 있습니다.
+  - 실제 렌더링되지 않습니다. 즉, 연산 비용을 최소화합니다.
+  - DOM fragment의 변화를 붂어서 적용한 다음 기존 DOM에 던져 주는 과정입니다.
+  - Virtual DOM이 항상 DOM보다 빠른가?
+    - ㄴㄴ. 인터랙션이 없는 페이지라면 일반 DOM의 성능이 더 좋을 수도 있다.
 - React를 사용하는 이유는?
+  - 모든 React DOM Object는 그에 대응하는 Virtual DOM 엘리먼트가 존재한다. 데이터가 업데이트되면 그 바뀐 데이터를 바탕으로 `React.createElement()`를 통해 `JSX element`를 업데이트합니다. 그러면 React는 Virtual DOM의 snapshot을 비교하여 정확히 어떤 부분이 바뀌었는지 검사합니다. 이것을 `Diffing` 이라 부르고, Virtual DOM의 `재조정`입니다.
+  - 즉, 인터랙션이 많은 페이지를 효율적으로 렌더링 할 수 있는 서비스를 쉽게 구현하기 위한 라이브러리라고 할 수 있다.
 - 제어 컴포넌트와 비제어 컴포넌트의 차이에 대해
 - key props를 사용하는 이유는?
 - props와 state의 차이는?
 - pure component에 대해
-- React Life Cycle에 대해
+- React Class Component Life Cycle
+
+![image-20211207010941822](2021_tech_winter.assets/image-20211207010941822.png)
+
+- React Functional Component Life Cycle
+
+![image-20211207010956684](2021_tech_winter.assets/image-20211207010956684.png)
+
 - 클래스형 컴포넌트와 함수형 컴포넌트의 차이
+
 - 리액트에서 JSX 문법이 어떻게 사용되나요?
+
 - 왜 state를 직접 바꾸지 않고 useState를 사용해야 하나요?
+
 - useMemo와 useCallback에 대해
+  성능 최적화를 위한 hook인 이 둘에 대해 공부해 보겠습니다.
+
+  ### useMemo
+
+  메모이제이션된 값을 리턴합니다.
+
+  React의 하위 컴포넌트는 상위 컴포넌트에서 받는 값 중, 하나라도 변경되면 전체 prop을 다시 받아옵니다. 간단하면 상관없지만, 복잡한 계산이 필요한 경우 계속해서 선언해야 할 수가 있겠습니다.
+
+  ```js
+  const color = getColor(color)
+  const movie = getMovie(movie)
+  // 여기에 useMemo를 얹겠습니다.
+  const color = useMemo(() => getColor(color), [color])
+  const movie = useMemo(() => getMovie(movie), [movie])
+  ```
+
+  위와 같이 바꾸면 값이 바뀐 prop만 다시 계산하게 됩니다.
+
+  ### useCallback
+
+  메모이제이션 된 콜백(함수)를 반환합니다.
+
+  컴포넌트가 렌더링 될 때마다 변수 뿐만 아니라 함수도 다시 선언됩니다. 하지만 매번 그럴 필요가 있을까요? 첫 마운트 될 때 한 번만 선언하고 재사용하면 되지 않을까요?
+
+  ```js
+  const onChange = useCallback((e) => {
+      const {name, value} = e.target
+      setInputs({
+          ...inputs,
+          [name]: value
+      })
+  }, [inputs])
+  ```
+
+  `useCallback` 사용 시 주의할 점은, 함수 내에서 사용하는 `state` 혹은 `props`가 있다면 꼭 `deps` 배열 안에 포함시켜야 된다는 것입니다. 만약에 넣지 않으면, 함수 내에서 해당 값들을 참조할 때 가장 최신 값일 거라는 보장이 없습니다.
+  뭐 애초에 에러를 띄워 주긴 합니다...
+
+  사실 `useCallback`은 `useMemo` 기반으로 만들어졌습니다. 다만, 함수를 위해서 사용할 때 더욱 편하게 해 준 것 뿐입니다. 이런 식으로도 표현할 수 있습니다.
+
+  ```js
+  const onToggle = useMemo(() => () => {
+      /* do side effects */
+  }, [deps])
+  ```
+
+  
+
 - useEffect와 useLayoutEffect에 대해
+
+  ```jsx
+  useEffect(() => {
+      // do side effects
+      return () => /* cleanup */
+  }, [dependency array])
+  
+  useLayoutEffect(() => {
+      // do side effects
+      return () => /* cleanup */
+  }, [dependency array])
+  ```
+
+  둘의 차이는 `어느 시점에 호출되는지`에 있습니다.
+
+  ### useEffect
+
+  렌더링된 요소들이 화면에 그려진 후, 비동기적으로 실행됩니다.
+
+  ![image-20211207124950183](2021_tech_winter.assets/image-20211207124950183.png)
+
+  ### useLayoutEffect
+
+  렌더링 되고, 화면에 그려지기 전 동기적으로 실행됩니다.
+
+  ![image-20211207125025932](2021_tech_winter.assets/image-20211207125025932.png)
+
+  ### 결론
+
+  useLayoutEffect는 동기적으로 실행되고 내부의 코드가 모두 실행된 후 painting 과정을 거치기 때문에, 로직이 복잡할 경우 사용자가 레이아웃을 보는데까지 시간이 오래 걸린다는 단점이 있어, 기본적으로 항상 useEffect만을 사용하는 것이 권장됩니다. 예를 들어,
+
+  - Data fetch
+  - event handler
+  - state reset
+
+  등의 작업은 useEffect를 사용하되, state의 조건에 따라 첫 painting 시 다르게 렌더링 되어야 할 때에는 re-rendering 되며 화면이 깜빡이기 때문에 useLayoutEffect를 사용합니다. 실시간으로 큰 데이터를 받아서 web에 표현할 경우 useEffect로는 실제 data와의 갭이 발생할 수 있어, data를 동기화 시키면서 사용하는 것이 좋다고 합니다.
+
 - Context API에 대해
+
 - 리액트에서 메모이제이션을 어떤 방식으로 하나요?
+
 - 리액트 관련 패키지 중에 제일 좋다고 생각한 것은 무엇인가요?
+
 - 리액트의 렌더링 성능 향상을 위해 어떻게 해야 하나요?
+
 - React-query에 대해 들어봤나요?
+
 - 굵직한 React 버전 업데이트에 대해 이해하고 있자
 
 ## Redux
@@ -370,12 +514,12 @@
 
 - 브라우저 렌더링 과정을 설명해 주세요.
   - Resource를 받았으니, 이제는 그려낼 차례입니다.
-  - 
 - 브라우저는 어떻게 동작하나요?
 - Webpack, Babel, Polyfill에 대해
 - CSR과 SSR의 차이
 - SPA와 SSR?
 - CORS는 무엇인지, 처리해 본 경험
+  - Cross Origin Request Sharing
 - 웹 표준을 지키면서 개발하시나요?
   - 시맨틱 태그 얘기
 - 쿠키와 세션에 대한 설명
