@@ -14,7 +14,7 @@
     - 맨 처음 ISP 서버에서 캐시 데이터가 없으면 루트 DNS 서버에게 요청
     - 루트 서버는 요청한 URL에 맞는 `TLD Top Level Domain name server` 로 안내 (.com)
     - ISP 서버는 그 다음 도메인(example)을 요청
-    - 또 그 다음을 요청하면 `IP = 1.1.1.1` 의 형태로 도메인을 리턴, 동시에 ISP 서버는 해당 정보를 캐시로 기록해 둠
+    - 또 그 다음을 요청하면 `IP = x.x.x.x` 의 형태로 도메인을 리턴, 동시에 ISP 서버는 해당 정보를 캐시로 기록해 둠
     - TCP 커넥션 시작 (3 way handshaking). connection
     - HTTPS는 TLS handshake 추가
     - HTTP Request를 보내면, 그에 맞는 Response를 받고 렌더링 시작
@@ -40,10 +40,10 @@
 
   - 연결을 종료하는 과정
   - 클라이언트는 FIN 플래그 전송
-  - 서버는 ACK 전성, 데이터를 모두 보낼 떄까지 Time out
+  - 서버는 ACK 전송, 데이터를 모두 보낼 떄까지 Time out
   - 데이터를 모두 보내면 FIN 플래그 전송
   - 클라이언트는 ACK 전송
-  - 클라이언트의 상태가 FIn-WAIT - TIME-WAIT로 바뀜
+  - 클라이언트의 상태가 FIN-WAIT - TIME-WAIT로 바뀜
     - Server에서 FIN을 전송하기 전에 전송한 패킷이 라우팅 지연이나 패킷 유실로 인해 데이터 유실이 일어날 수 있다. 이런 상황을 대비해서 클라이언트는 일정 시간 동안 세션을 남겨두고 잉여 패킷을 기다린다.
 
 - HTTP에 대한 기초적인 이해 (Req, Res, HTTP Status Code)
